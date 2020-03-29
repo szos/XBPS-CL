@@ -1,0 +1,42 @@
+#+TITLE: XBPS graphical interface readme
+#+subtitle: A GUI for XBPS written in CL
+
+* Getting Started
+  This application can be run two separate ways, through a repl, or by generating a standalone executable. Regardless, youll need the dependencies. 
+ 
+** Dependencies
+   This depends upon SBCL, and quicklisp. Quicklisp can be obtained from https://www.quicklisp.org/beta/. Optionally, if one has zenity installed it will be used for the password prompt, otherwise the native clim prompt will be used. 
+
+   This depends upon the following Common Lisp systems, which can be obtained with quicklisp: 
+   - clawk
+   - str
+   - mcclim
+   - slim
+
+** From the REPL
+   To do this you'll have to add this system to quicklisp, by copying this repo to =~/quicklisp/local-projects/=, and then adding =xbps/xbps.asd= to =~/quicklisp/local-projects/system-index.txt=. Once that is done it should be discoverable by quicklisp, so fire up a repl and run ~(ql:quickload :xbps)~, followed by ~(xbps::app-main)~. 
+
+** Standalone Executable
+   This will require all dependencies, but instead of adding xbps to quicklisp, simply run the shell script =make-executable.sh=. This will generate an executable in the current directory, which can be moved anywhere youd like. It can also be symlinked to somewhere in your path so that regenerating the executable in place will act more seamlessly. 
+
+* Usage
+  The usage of this is fairly simple. one can search for a package by typing =search= command, followed by a search term. The search command will execute when a newline or space is entered after the search term. This will bring up the search view, which shows all the results. Clicking on a package will mark it, alternatively you can right click in order to install that package specifically or inspect it. 
+  
+  Marks can be installed or removed, but not inspected, with the commands =install marked packages= and =remove marked packages=. This will prompt for a sudo password, and operate upon all marks. Marks dont change with searches - if you search for =fish= and mark =fish-shell=, then search for and mark  =dillo=, running =install marked packages= will install both. For this reason marks are shown at the top of the window, to keep track of them. 
+
+  Inspecting a package will open the inspection view, which shows all information, and provides clickable elements to visit the homepage or send an email to the maintainer. 
+
+** Sudo Password
+   As its inadvisable to run this application as root, the sudo password will be needed to install/remove packages. This password will be prompted for when needed, and will be stored for 60 seconds before being reset. 
+
+*** Submitting the Password
+    The sudo password prompt will be a zenity window, if zenity is installed. Otherwise it will be prompted for via CLIM itself. If prompted for by CLIM, the interactor will go white. This is your indication to type the password. After typing the password, it can be submitted with M-RET (Hold down meta/alt and press return). No characters will be printed on the screen. 
+
+* Roadmap
+  Here is a wishlist/roadmap in no particular order: 
+
+  While the xbps functions are present, there is currently no way to access them, and they aren't integrated into the display functions and presentation types. These should be added, where appropriate. 
+  
+  It would be nice to have a click-and-drag functionality that marks all packages between the click event and the release event. 
+
+  Add an option setting pane. This would allow users to toggle and set options to the desired setting. For example the timer length for resetting the sudo password, or changing the default password prompt system. 
