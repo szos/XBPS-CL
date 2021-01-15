@@ -16,9 +16,13 @@
       passwd)
   (defun zenity-password-prompt ()
     (setf passwd
-	  (string-trim '(#\newline)
-		       (with-output-to-string (stream)
-			 (uiop:run-program "zenity --password" :output stream)))))
+	  (handler-case
+	      (string-trim '(#\newline)
+			   (with-output-to-string (stream)
+			     (uiop:run-program "zenity --password"
+					       :output stream)))
+	    (uiop/run-program:subprocess-error (c)
+	      nil))))
   (defun prompt-for-password ()
     (let ((stream (frame-standard-input *application-frame*)))
       (accepting-values (stream :own-window nil)
@@ -69,8 +73,11 @@
 (defmacro with-sudo (password &body body)
   `(let ((*sudo-password* ,(or password ;; '(prompt-for-password)
 			       '(password-prompt))))
-     (prog1 (progn ,@body)
-       (setf *sudo-password* nil))))
+     (if *sudo-password* 
+	 (prog1 (progn ,@body)
+	   (setf *sudo-password* nil))
+	 (notify-user *application-frame*
+		      "Encountered an error getting the password"))))
 
 (define-condition unknown-package-error (error)
   ())
