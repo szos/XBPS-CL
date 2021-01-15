@@ -1,9 +1,9 @@
 ;;;; xbps.asd
 
 (asdf:defsystem #:xbps
-  :description "Describe xbps here"
-  :author "Your Name <your.name@example.com>"
-  :license  "Specify license here"
+  :description "Graphical frontend for xbps"
+  :author "szos at posteo dot net"
+  :license  "GPLv3"
   :version "0.0.1"
   :serial t
   :depends-on (#:clawk
