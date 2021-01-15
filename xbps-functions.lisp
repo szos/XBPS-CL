@@ -18,7 +18,8 @@
     (xbps 'remove "Ry" packages)))
 
 (defun search-for-package (name)
-  (xbps 'query "Rs" name))
+  (when (and name (not (string= name "")))
+    (xbps 'query "Rs" name)))
 
 (defun upgrade-packages (&rest packages)
   (with-sudo nil
