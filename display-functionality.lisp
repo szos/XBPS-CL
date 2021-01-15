@@ -107,11 +107,23 @@
 			 (slim:cell (write-string name pane))
 			 (slim:cell (write-string desc pane)))))))))))
 
-(define-xbps-command (com-search :name "Search") ((string string))
+(define-condition nil-not-string-error (error) ())
+
+(define-xbps-command (com-search :name "Search" :keystroke (#\s :control))
+    ((string t
+	     ;; string
+	     :prompt "search term"))
   (unless (equal 'default (frame-current-layout *application-frame*))
     (setf (frame-current-layout *application-frame*) 'default))
-  (set-search-display (parse-xbps-search-string (search-for-package string) t))
-  (set-last-search-term string))
+  (if (stringp string)
+      (progn (set-search-display
+	      (parse-xbps-search-string (search-for-package string) t))
+	     (set-last-search-term string))
+      (let ((s (format nil "~a" string)))
+        (when string
+	  (set-search-display
+	   (parse-xbps-search-string (search-for-package s) t))
+	  (set-last-search-term s)))))
 
 (let ((shell (uiop:launch-program "/bin/sh" :input :stream :output :stream)))
   (defun fast-search-for-package (name &key (remote t))
